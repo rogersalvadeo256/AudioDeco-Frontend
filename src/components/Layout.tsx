@@ -82,7 +82,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
     useEffect(() => {
         if (currentBook && audioRef.current) {
-            const streamUrl = `http://localhost:5000/api/audiobooks/${currentBook.id}/stream`;
+            const streamUrl = `${process.env.REACT_APP_BACKEND_URL}/api/audiobooks/${currentBook.id}/stream`;
 
             if (!isMultiFile && audioRef.current.src !== streamUrl) {
                 audioRef.current.src = streamUrl;
@@ -126,7 +126,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
         try {
             if (isMultiFile) {
-                const streamUrl = `http://localhost:5000/api/audiobooks/${currentBook.id}/stream?startTime=${encodeURIComponent(chapter.startTime)}`;
+                const streamUrl = `${process.env.REACT_APP_BACKEND_URL}/api/audiobooks/${currentBook.id}/stream?startTime=${encodeURIComponent(chapter.startTime)}`;
                 audioRef.current.src = streamUrl;
                 await audioRef.current.load();
             } else {
@@ -284,7 +284,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                         <>
                             <div className={`w-12 h-12 bg-stone-800 border ${t.border} flex-shrink-0 relative overflow-hidden`}>
                                 {currentBook.coverPath && (
-                                    <img src={`http://localhost:5000${currentBook.coverPath}`} alt="Cover" className="w-full h-full object-cover" />
+                                    <img src={`${process.env.REACT_APP_BACKEND_URL}${currentBook.coverPath}`} alt="Cover" className="w-full h-full object-cover" />
                                 )}
                                 <div className="absolute inset-0 bg-gradient-to-tr from-black/40 to-transparent"></div>
                             </div>

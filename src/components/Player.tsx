@@ -157,7 +157,7 @@ const Player: React.FC = () => {
             <div className="w-full lg:w-1/2 p-6 flex flex-col items-center justify-center border-b lg:border-b-0 lg:border-r border-deco-purple dark:border-deco-silver overflow-y-auto">
                 <div className="w-64 h-64 mb-8 shadow-2xl border-4 border-deco-gold dark:border-deco-red flex-shrink-0">
                     {book.coverPath ? (
-                        <img src={`http://localhost:5000${book.coverPath}`} alt="Cover" className="w-full h-full object-cover" />
+                        <img src={`${process.env.REACT_APP_BACKEND_URL}${book.coverPath}`} alt="Cover" className="w-full h-full object-cover" />
                     ) : (
                         <div className="w-full h-full bg-gray-800 flex items-center justify-center text-5xl text-deco-gold">
                             {book.title[0]}

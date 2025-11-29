@@ -215,7 +215,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, t, theme, currentBook, isPlay
 
             <div className={`relative w-full aspect-[2/3] bg-stone-800 mb-4 overflow-hidden`}>
                 {book.coverPath ? (
-                    <img src={`http://localhost:5000${book.coverPath}`} alt={book.title} className="w-full h-full object-cover" />
+                    <img src={`${process.env.REACT_APP_BACKEND_URL}${book.coverPath}`} alt={book.title} className="w-full h-full object-cover" />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center text-4xl font-deco text-white opacity-20">
                         {book.title[0]}

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/audiobooks';
+const API_URL = `${process.env.REACT_APP_BACKEND_URL}/api/audiobooks`;
 
 interface DashboardStats {
     totalBooks: number;
@@ -87,7 +87,7 @@ export const deleteBookmark = async (id: number | string, bookmarkId: number): P
     await axios.delete(`${API_URL}/${id}/bookmarks/${bookmarkId}`);
 };
 
-const USERS_API_URL = 'http://localhost:5000/api/users';
+const USERS_API_URL = `${process.env.REACT_APP_BACKEND_URL}/api/users`;
 
 export const getUserSettings = async (userId: number = 1): Promise<UserSettings> => {
     const response = await axios.get(`${USERS_API_URL}/${userId}/settings`);
