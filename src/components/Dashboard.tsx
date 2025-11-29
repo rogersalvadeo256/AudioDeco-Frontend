@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getDashboardStats } from '../services/api';
+import { BookIcon, BookOpenIcon, BookXIcon, Library, LibraryBig } from 'lucide-react';
 
 const HOUR = 60;
 const DAY = 24 * HOUR;
@@ -27,16 +28,27 @@ interface StatCardProps {
 }
 
 const StatCard: React.FC<StatCardProps> = ({ title, value, icon: Icon }) => (
-    <div className="border-2 border-deco-gold dark:border-deco-red p-6
-        bg-deco-light-surface dark:bg-deco-dark-surface
-        shadow-[8px_8px_0px_0px_rgba(212,175,55,0.5)] dark:shadow-[8px_8px_0px_0px_rgba(139,0,0,0.5)]">
-        <div className="text-deco-purple dark:text-deco-silver text-lg font-bold uppercase tracking-wide mb-2">
-            {title}
+    
+
+    <div className="h-full flex flex-col justify-between py-4 px-6 relative group cursor-pointer bg-[#0a0a0a]">
+      <div className="absolute top-0 left-0 w-full h-1 border-t border-b border-gray-800 group-hover:border-red-900 transition-colors"></div>
+      
+      <div className="flex items-center justify-center gap-4 py-4">
+        <div className="p-2 border border-gray-800 rotate-45 group-hover:border-red-800 transition-colors">
+            <Icon className="w-6 h-6 text-gray-300 -rotate-45" />
         </div>
-        <div className="text-4xl font-deco text-deco-gold dark:text-deco-red">
-            {value}
+        <div className="text-center">
+            <span className="block font-serif text-4xl text-white leading-none">{value}</span>
         </div>
+      </div>
+      <div className="text-center">
+          <span className="text-[10px] uppercase tracking-[0.3em] text-red-700 font-sans">{title}</span>
+      </div>
+
+      <div className="absolute bottom-0 left-0 w-full h-1 border-t border-b border-gray-800 group-hover:border-red-900 transition-colors"></div>
     </div>
+
+
 );
 
 const Dashboard: React.FC = () => {
@@ -83,10 +95,10 @@ const Dashboard: React.FC = () => {
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <StatCard title="Total Books" value={stats.totalBooks} icon={() => null} />
-            <StatCard title={timeListened} value={getTotalTTime(stats.totalMinutesListened).amount} icon={() => null} />
-            <StatCard title={timeRemaining} value={getTotalTTime(stats.minutesRemaining).amount} icon={() => null} />
-            <StatCard title="Not Started" value={stats.notStarted} icon={() => null} />
+            <StatCard title="Total Books" value={stats.totalBooks} icon={LibraryBig} />
+            <StatCard title={timeListened} value={getTotalTTime(stats.totalMinutesListened).amount} icon={BookOpenIcon} />
+            <StatCard title={timeRemaining} value={getTotalTTime(stats.minutesRemaining).amount} icon={BookXIcon} />
+            <StatCard title="Not Started" value={stats.notStarted} icon={BookIcon} />
         </div>
     );
 };
