@@ -6,6 +6,7 @@ import { updateProgress, getUserSettings } from '../services/api';
 import { parseTimeToSeconds, formatTimeFromSeconds } from '../utils/time';
 import SidebarItem from './common/SidebarItem';
 import DecoCorner from './common/DecoCorner';
+import Logo from './common/Logo';
 import {
     Play, Pause, SkipForward, SkipBack,
     Library, Upload, Settings, Search,
@@ -151,9 +152,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div className={`w-20 lg:w-64 border-r ${t.border} flex flex-col flex-shrink-0 z-20 ${t.bgSecondary} transition-colors duration-500`}>
                 <div className={`h-24 flex items-center justify-center lg:justify-start lg:px-8 border-b ${t.border}`}>
                     <Link to="/" className="flex items-center">
-                        <div className={`w-8 h-8 border-2 ${theme === 'dark' ? 'border-red-600' : 'border-amber-400'} rotate-45 flex items-center justify-center mr-0 lg:mr-4`}>
-                            <div className={`w-4 h-4 ${theme === 'dark' ? 'bg-red-900/40' : 'bg-amber-400/40'} -rotate-45`} />
-                        </div>
+                        <Logo width={32} height={32} className="mr-0 lg:mr-4" />
                         <h1 className={`hidden lg:block font-serif text-xl tracking-widest ${t.textHighlight}`}>
                             AUDIO<span className={t.textAccent}>DECO</span>
                         </h1>
