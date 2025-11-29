@@ -1,32 +1,51 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { getDashboardStats } from '../services/api';
 
-interface DashboardProps {
-  user: { email: string; name: string } | null;
-  onLogout: () => void;
+interface DashboardStats {
+    totalBooks: number;
+    totalMinutesListened: number;
+    minutesRemaining: number;
+    notStarted: number;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
-  return (
-    <div className="flex justify-center items-center min-h-screen">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Welcome to Dashboard</h2>
-        <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-          <p className="mb-2 text-gray-700">
-            <strong className="font-semibold">Name:</strong> {user?.name}
-          </p>
-          <p className="text-gray-700">
-            <strong className="font-semibold">Email:</strong> {user?.email}
-          </p>
+interface StatCardProps {
+    title: string;
+    value: number;
+    icon: React.ComponentType<any>;
+}
+
+const StatCard: React.FC<StatCardProps> = ({ title, value, icon: Icon }) => (
+    <div className="border-2 border-deco-gold dark:border-deco-red p-6
+        bg-deco-light-surface dark:bg-deco-dark-surface
+        shadow-[8px_8px_0px_0px_rgba(212,175,55,0.5)] dark:shadow-[8px_8px_0px_0px_rgba(139,0,0,0.5)]">
+        <div className="text-deco-purple dark:text-deco-silver text-lg font-bold uppercase tracking-wide mb-2">
+            {title}
         </div>
-        <button
-          onClick={onLogout}
-          className="w-full bg-red-600 text-white py-3 rounded-lg font-medium hover:bg-red-700 transition duration-200 shadow-md hover:shadow-lg"
-        >
-          Logout
-        </button>
-      </div>
+        <div className="text-4xl font-deco text-deco-gold dark:text-deco-red">
+            {value}
+        </div>
     </div>
-  );
+);
+
+const Dashboard: React.FC = () => {
+    const [stats, setStats] = useState<DashboardStats | null>(null);
+
+    useEffect(() => {
+        getDashboardStats()
+            .then(setStats)
+            .catch(err => console.error(err));
+    }, []);
+
+    if (!stats) return <div className="text-center p-10">Loading Dashboard...</div>;
+
+    return (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <StatCard title="Total Books" value={stats.totalBooks} icon={() => null} />
+            <StatCard title="Listened (Mins)" value={stats.totalMinutesListened} icon={() => null} />
+            <StatCard title="Remaining (Mins)" value={stats.minutesRemaining} icon={() => null} />
+            <StatCard title="Not Started" value={stats.notStarted} icon={() => null} />
+        </div>
+    );
 };
 
 export default Dashboard;

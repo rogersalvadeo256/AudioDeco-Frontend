@@ -1,30 +1,32 @@
-import React, { useState } from 'react';
-import Login from './components/Login';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from './context/ThemeContext';
+import { PlayerProvider } from './context/PlayerContext';
+import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
+import Library from './components/Library';
+import Upload from './components/Upload';
+import Player from './components/Player';
+import Settings from './components/Settings';
 
-function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<{ email: string; name: string } | null>(null);
-
-  const handleLogin = (userData: { email: string; name: string }) => {
-    setIsAuthenticated(true);
-    setUser(userData);
-  };
-
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    setUser(null);
-  };
-
+const App: React.FC = () => {
   return (
-    <div className="min-h-screen">
-      {isAuthenticated ? (
-        <Dashboard user={user} onLogout={handleLogout} />
-      ) : (
-        <Login onLogin={handleLogin} />
-      )}
-    </div>
+    <ThemeProvider>
+      <PlayerProvider>
+        <Router>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/library" element={<Library />} />
+              <Route path="/upload" element={<Upload />} />
+              <Route path="/player/:id" element={<Player />} />
+              <Route path="/settings" element={<Settings />} />
+            </Routes>
+          </Layout>
+        </Router>
+      </PlayerProvider>
+    </ThemeProvider>
   );
-}
+};
 
 export default App;
