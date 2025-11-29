@@ -3,6 +3,9 @@ import { useTheme } from '../context/ThemeContext';
 import { usePlayer } from '../context/PlayerContext';
 import { Link, useLocation } from 'react-router-dom';
 import { updateProgress, getUserSettings } from '../services/api';
+import { parseTimeToSeconds, formatTimeFromSeconds } from '../utils/time';
+import SidebarItem from './common/SidebarItem';
+import DecoCorner from './common/DecoCorner';
 import {
     Play, Pause, SkipForward, SkipBack,
     Library, Upload, Settings, Search,
@@ -39,32 +42,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         loadSettings();
     }, []);
 
-    const timeSpanToSeconds = (timeSpan: string): number => {
-        if (!timeSpan) return 0;
-        const parts = timeSpan.split(':');
-        if (parts.length === 3) {
-            const hours = parseInt(parts[0]) || 0;
-            const minutes = parseInt(parts[1]) || 0;
-            const seconds = parseFloat(parts[2]) || 0;
-            return hours * 3600 + minutes * 60 + seconds;
-        }
-        return 0;
-    };
 
-    const formatTime = (seconds: number): string => {
-        if (!seconds) return "00:00";
-        const h = Math.floor(seconds / 3600);
-        const m = Math.floor((seconds % 3600) / 60);
-        const s = Math.floor(seconds % 60);
-
-        const mStr = m.toString().padStart(2, '0');
-        const sStr = s.toString().padStart(2, '0');
-
-        if (h > 0) {
-            return `${h}:${mStr}:${sStr}`;
-        }
-        return `${mStr}:${sStr}`;
-    };
 
     const isMultiFile = useMemo(() => {
         return currentBook && currentBook.chapters ? currentBook.chapters.some((c: any) => c.fileName) : false;
@@ -100,8 +78,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
             if (!isMultiFile && currentBook && currentBook.chapters.length > 1) {
                 const foundIndex = currentBook.chapters.findIndex((c: any) => {
-                    const start = timeSpanToSeconds(c.startTime);
-                    const end = timeSpanToSeconds(c.endTime);
+                    const start = parseTimeToSeconds(c.startTime);
+                    const end = parseTimeToSeconds(c.endTime);
                     return time >= start && time < end;
                 });
                 if (foundIndex !== -1 && foundIndex !== currentChapterIndex) {
@@ -130,7 +108,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 audioRef.current.src = streamUrl;
                 await audioRef.current.load();
             } else {
-                const startTime = timeSpanToSeconds(chapter.startTime);
+                const startTime = parseTimeToSeconds(chapter.startTime);
                 audioRef.current.currentTime = startTime;
             }
 
@@ -158,24 +136,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         }
     };
 
-    const SidebarItem = ({ icon: Icon, label, path }: { icon: React.ComponentType<any>, label: string, path: string }) => {
-        const active = location.pathname === path;
-        return (
-            <Link
-                to={path}
-                className={`
-                    group relative flex items-center w-full p-4 mb-2 transition-all duration-300
-                    ${active ? t.sidebarActive : `${t.textMuted} ${t.sidebarHover}`}
-                `}
-            >
-                {active && <div className={`absolute left-0 top-0 bottom-0 w-1 ${t.sidebarDecor}`} />}
-                <Icon size={20} strokeWidth={1.5} className="mr-4" />
-                <span className="uppercase tracking-[0.2em] text-xs font-semibold">{label}</span>
 
-                <div className={`absolute bottom-0 left-4 right-4 h-[1px] ${theme === 'dark' ? 'bg-red-500/20' : 'bg-amber-500/20'} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left`} />
-            </Link>
-        );
-    };
 
     return (
         <div className={`flex h-screen w-full ${t.bg} ${t.textMain} font-sans overflow-hidden ${t.selection} transition-colors duration-500`}>
@@ -332,7 +293,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     </div>
 
                     <div className={`w-full max-w-md flex items-center gap-3 text-[10px] ${t.textMuted} font-mono`}>
-                        <span>{formatTime(currentTime)}</span>
+                        <span>{formatTimeFromSeconds(currentTime)}</span>
                         <div
                             className={`flex-1 h-[2px] ${t.border} relative group cursor-pointer bg-gray-700/20`}
                             onClick={handleSeek}
@@ -346,7 +307,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                 style={{ left: `${(currentTime / (duration || 1)) * 100}%` }}
                             ></div>
                         </div>
-                        <span>{formatTime(duration)}</span>
+                        <span>{formatTimeFromSeconds(duration)}</span>
                     </div>
                 </div>
 

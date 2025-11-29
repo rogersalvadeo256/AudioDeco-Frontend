@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { getUserSettings, updateUserSettings } from '../services/api';
+import DecoCorner from './common/DecoCorner';
 import { Settings as SettingsIcon, Save } from 'lucide-react';
 
 const Settings: React.FC = () => {

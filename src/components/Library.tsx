@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { getAudiobooks, updateAudiobook, deleteAudiobook } from '../services/api';
 import { useTheme } from '../context/ThemeContext';
 import { usePlayer } from '../context/PlayerContext';
+import { parseTimeToSeconds, formatTimeFromSeconds } from '../utils/time';
+import DecoCorner from './common/DecoCorner';
 import { Play, Pause, Edit2, Trash2, Clock, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -36,13 +38,7 @@ interface BookCardProps {
     formatDuration: (duration: string) => string;
 }
 
-const formatDuration = (duration: string): string => {
-    if (!duration) return '00:00';
-    if (typeof duration === 'string') {
-        return duration.split('.')[0];
-    }
-    return duration;
-};
+
 
 const Library: React.FC = () => {
     const [books, setBooks] = useState<Book[]>([]);
@@ -167,7 +163,7 @@ const Library: React.FC = () => {
                         handlePlay={handlePlay}
                         handleEdit={handleEdit}
                         handleDelete={handleDelete}
-                        formatDuration={formatDuration}
+                        formatDuration={(d) => formatTimeFromSeconds(parseTimeToSeconds(d))}
                     />
                 ))}
             </div>
@@ -182,28 +178,14 @@ const Library: React.FC = () => {
     );
 };
 
-const DecoCorner = ({ className }: { className: string }) => (
-    <div className={`absolute w-4 h-4 ${className}`}></div>
-);
+
 
 const BookCard: React.FC<BookCardProps> = ({ book, t, theme, currentBook, isPlaying, handlePlay, handleEdit, handleDelete, formatDuration }) => {
     const isCurrent = currentBook?.id === book.id;
     const playing = isCurrent && isPlaying;
 
-    const parseTime = (timeStr: string): number => {
-        if (!timeStr) return 0;
-        const parts = timeStr.split(':');
-        let seconds = 0;
-        if (parts.length === 3) {
-            seconds += parseInt(parts[0]) * 3600;
-            seconds += parseInt(parts[1]) * 60;
-            seconds += parseFloat(parts[2]);
-        }
-        return seconds;
-    };
-
-    const currentSeconds = parseTime(book.currentTime);
-    const totalSeconds = parseTime(book.duration);
+    const currentSeconds = parseTimeToSeconds(book.currentTime);
+    const totalSeconds = parseTimeToSeconds(book.duration);
     const progress = totalSeconds > 0 ? (currentSeconds / totalSeconds) * 100 : 0;
 
     return (

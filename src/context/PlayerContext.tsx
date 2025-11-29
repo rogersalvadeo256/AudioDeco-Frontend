@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useRef } from 'react';
 import { updateProgress } from '../services/api';
+import { formatTimeFromSeconds } from '../utils/time';
 
 interface Book {
     id: number;
@@ -50,13 +51,7 @@ export const PlayerProvider: React.FC<PlayerProviderProps> = ({ children }) => {
     const [currentChapterIndex, setCurrentChapterIndex] = useState<number>(0);
     const audioRef = useRef<HTMLAudioElement>(null);
 
-    const formatTime = (seconds: number): string => {
-        if (!seconds) return "00:00";
-        const h = Math.floor(seconds / 3600);
-        const m = Math.floor((seconds % 3600) / 60);
-        const s = Math.floor(seconds % 60);
-        return `${h > 0 ? h + ':' : ''}${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-    };
+
 
     const playBook = async (book: Book): Promise<void> => {
         if (currentBook?.id === book.id) {
@@ -64,7 +59,7 @@ export const PlayerProvider: React.FC<PlayerProviderProps> = ({ children }) => {
         } else {
             if (currentBook && audioRef.current) {
                 try {
-                    const timeString = formatTime(audioRef.current.currentTime);
+                    const timeString = formatTimeFromSeconds(audioRef.current.currentTime);
                     await updateProgress(currentBook.id, timeString);
                 } catch (e) {
                     console.error("Failed to save progress on switch", e);

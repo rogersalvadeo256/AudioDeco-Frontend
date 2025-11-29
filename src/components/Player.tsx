@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { getAudiobook, addBookmark, getBookmarks, deleteBookmark } from '../services/api';
 import { usePlayer } from '../context/PlayerContext';
+import { parseTimeToSeconds, formatTimeFromSeconds } from '../utils/time';
 import { FaBookmark, FaList, FaPlay, FaPause, FaTrash } from 'react-icons/fa';
 
 interface Bookmark {
@@ -65,13 +66,7 @@ const Player: React.FC = () => {
         }
     };
 
-    const formatTime = (seconds: number): string => {
-        if (!seconds) return "00:00";
-        const h = Math.floor(seconds / 3600);
-        const m = Math.floor((seconds % 3600) / 60);
-        const s = Math.floor(seconds % 60);
-        return `${h > 0 ? h + ':' : ''}${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-    };
+
 
     const handleAddBookmark = async () => {
         if (!isCurrentBook || !audioRef.current) {
@@ -86,27 +81,12 @@ const Player: React.FC = () => {
         if (isMultiFile && currentChapterIndex >= 0 && book.chapters[currentChapterIndex]) {
             const currentChapter = book.chapters[currentChapterIndex];
 
-            const parseTime = (timeStr: string): number => {
-                if (!timeStr) return 0;
-                const parts = timeStr.split(':');
-                let seconds = 0;
-                if (parts.length === 3) {
-                    seconds += parseInt(parts[0]) * 3600;
-                    seconds += parseInt(parts[1]) * 60;
-                    seconds += parseFloat(parts[2]);
-                } else if (parts.length === 2) {
-                    seconds += parseInt(parts[0]) * 60;
-                    seconds += parseFloat(parts[1]);
-                }
-                return seconds;
-            };
-
-            const chapterStartSeconds = parseTime(currentChapter.startTime);
+            const chapterStartSeconds = parseTimeToSeconds(currentChapter.startTime);
 
             timestampSeconds = chapterStartSeconds + audioRef.current.currentTime;
         }
 
-        const timeString = formatTime(timestampSeconds);
+        const timeString = formatTimeFromSeconds(timestampSeconds);
         const bookmark = {
             timestamp: timeString,
             note: newNote
@@ -136,13 +116,7 @@ const Player: React.FC = () => {
             playBook(book);
         }
 
-        const parts = timestamp.split(':');
-        let seconds = 0;
-        if (parts.length === 3) {
-            seconds = parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseInt(parts[2]);
-        } else if (parts.length === 2) {
-            seconds = parseInt(parts[0]) * 60 + parseInt(parts[1]);
-        }
+        const seconds = parseTimeToSeconds(timestamp);
 
         if (audioRef.current) {
             audioRef.current.currentTime = seconds;
@@ -178,8 +152,8 @@ const Player: React.FC = () => {
                                 ></div>
                             </div>
                             <div className="flex justify-between text-xs font-mono opacity-75 w-full">
-                                <span>{formatTime(currentTime)}</span>
-                                <span>{formatTime(duration)}</span>
+                                <span>{formatTimeFromSeconds(currentTime)}</span>
+                                <span>{formatTimeFromSeconds(duration)}</span>
                             </div>
 
                             <button onClick={handlePlayPause} className="w-16 h-16 rounded-full bg-deco-gold dark:bg-deco-red text-white flex items-center justify-center hover:scale-105 transition shadow-lg">
